@@ -2,10 +2,24 @@ import queryString from 'query-string'
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import './Chat.css';
-//import TextContainer from '../TextContainer/TextContainer';
 import Messages from '../Messages/Messages';
 import InfoBar from '../InfoBar/InfoBar';
 import Input from '../Input/Input';
+
+
+/*
+message structure: 
+{
+    hasImage: false
+    hasText: false
+    image: 
+    text:
+    user
+}
+
+*/
+
+
 
 let socket
 let to_Send = []
@@ -15,6 +29,9 @@ const Chat = ({location}) => {
     const [message,setMessage] = useState('');
     const [messages,setMessages] = useState([]);
     const [file,setFile] = useState('');
+    const [hasText,setTextStatus] = useState(false);
+    const [hasImage,setImageStatus] = useState(false);
+    const [image,setImage] = useState('');
     const ENDPOINT = "localhost:5000";
     useEffect(
         ()=>{
@@ -23,8 +40,14 @@ const Chat = ({location}) => {
             setName(username);
             console.log(username);
             socket = io(ENDPOINT);
-
-            socket.emit("join",{username:username},()=>{});
+            const msg ={
+                    hasImage: false,
+                    hasText: false,
+                    image: null,
+                    text:username,
+                    user: username,
+                }
+            socket.emit("join",msg,()=>{});
 
 
         },[ENDPOINT,location.search])
@@ -32,7 +55,8 @@ const Chat = ({location}) => {
     useEffect(
         ()=>{
             socket.on("message",(message1)=>{
-                //console.log(message1);
+
+                console.log(message1);
                 setMessages(messages => [...messages, message1]);
                 //console.log(Object.keys(messages));
                 //console.log(messages);
@@ -54,12 +78,15 @@ const Chat = ({location}) => {
     const sendMessage = (event)=>{
         event.preventDefault();
         //console.log(message);
-        if(message)
-        {
-            //console.log(message)
-            socket.emit("sendMessage",{message},()=>setMessage('Hello'));
-            //console.log(message);
-        }
+        const toBeSent = {hasImage:hasImage,hasText:hasText,image:image,text:message,user:username};
+        //console.log(message)
+        socket.emit("sendMessage",toBeSent,()=>setMessage());
+        console.log(toBeSent);
+        setMessage('')
+        setFile('');
+        setTextStatus(false);
+        setImageStatus(false);
+        //console.log(message);
     }
 
     const sendFile = (event)=>{
@@ -78,8 +105,9 @@ const Chat = ({location}) => {
     const uploadFile = (file_whole) => {
         console.log(file_whole);
         convertToBase64(file_whole).then(base64 => {
-            console.log(base64);
-            socket.emit("sendFile",{base64},()=>setFile(''));
+            //console.log(base64);
+            //socket.emit("sendFile",{base64},()=>setFile(''));
+            setImage(base64);
         });
     };
 
@@ -96,6 +124,17 @@ const Chat = ({location}) => {
         });
     }
 
+    const onChangeText = (event) =>{
+        const message_read = event.target.value;
+        setMessage(message_read);
+        setTextStatus(true);
+    }
+
+    const onChangeImage = (event) =>{
+        const image_name = event.target.files[0].name;
+        setFile(image_name);
+        setImageStatus(true);
+    }
 
         // return(
         //     <div className="outerContainer">
@@ -124,7 +163,7 @@ const Chat = ({location}) => {
               <div className="container">
                   <InfoBar/>
                   <Messages messages={messages} name={username} />
-                  <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
+                  <Input message={message} setMessage={setMessage} sendMessage={sendMessage} onChangeText= {onChangeText} onChangeImage= {onChangeImage}/>
               </div>
             </div>
           );

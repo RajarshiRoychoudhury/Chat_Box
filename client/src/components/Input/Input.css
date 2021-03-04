@@ -26,3 +26,25 @@
     border: none;
     width: 20%;
   }
+
+/* Style buttons */
+.input_file {
+  background-color: DodgerBlue; /* Blue background */
+  border: none; /* Remove borders */
+  color: white; /* White text */
+  padding: 3px 4px; /* Some padding */
+  font-size: 0px; /* Set a font size */
+  cursor: pointer; /* Mouse pointer on hover */
+}
+
+/* Darker background on mouse-over */
+.input_file:hover {
+  background-color: rosybrown;
+}
+
+.custom-file-upload {
+  border: 1px solid #ccc;
+  display: inline-block;
+  cursor: pointer;
+}
+
