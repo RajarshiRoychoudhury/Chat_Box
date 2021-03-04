@@ -33,6 +33,8 @@ io.on('connection',(socket)=>{
     socket.on('sendMessage',(message)=>{
       console.log(message);
       console.log("Message received");
+      //const hawas = message;
+      socket.emit("message",message,()=>{console.log("Message emitted")});
     });
     socket.on("sendFile",(file_whole)=>{console.log(file_whole);console.log("Image received");socket.emit("receiveFile",{file_whole},()=>{});});
 })

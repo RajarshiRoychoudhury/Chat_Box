@@ -1,8 +1,14 @@
 import queryString from 'query-string'
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
+import './Chat.css';
+//import TextContainer from '../TextContainer/TextContainer';
+import Messages from '../Messages/Messages';
+import InfoBar from '../InfoBar/InfoBar';
+import Input from '../Input/Input';
 
 let socket
+let to_Send = []
 
 const Chat = ({location}) => {
     const [username,setName] = useState('');
@@ -25,10 +31,14 @@ const Chat = ({location}) => {
     
     useEffect(
         ()=>{
-            socket.on("message",(message)=>{
-                setMessages([...messages,message]);
+            socket.on("message",(message1)=>{
+                //console.log(message1);
+                setMessages(messages => [...messages, message1]);
+                //console.log(Object.keys(messages));
+                //console.log(messages);
+                //to_Send.push(message1);
             })
-        },[messages])
+        },[])
 
         useEffect(
             ()=>{
@@ -37,13 +47,18 @@ const Chat = ({location}) => {
                 })
             },[])
     
+    // const update = (message)=>{
+    //     setMessages(messages => [...messages, message]);
+    // }
+
     const sendMessage = (event)=>{
         event.preventDefault();
+        //console.log(message);
         if(message)
         {
-            console.log(message)
-            socket.emit("sendMessage",{message},()=>setMessage(''));
-            console.log("Message entered");
+            //console.log(message)
+            socket.emit("sendMessage",{message},()=>setMessage('Hello'));
+            //console.log(message);
         }
     }
 
@@ -82,25 +97,37 @@ const Chat = ({location}) => {
     }
 
 
-        return(
-            <div className="outerContainer">
-                <div className="container">
-                    <input 
-                    value={message} 
-                    onChange={(event)=>{setMessage(event.target.value)}}
-                    onKeyPress={event=>event.key === 'Enter' ? sendMessage(event) : null} 
-                     />
-                     <input type="file" 
-                     onChange={(event)=>{console.log(event.target.files[0]);
-                        setFile(event.target.files[0].name);
-                    }} 
+        // return(
+        //     <div className="outerContainer">
+        //         <div className="container">
+        //             <InfoBar />
+        //             <Input />
+        //             {/* <input 
+        //             value={message} 
+        //             onChange={(event)=>{setMessage(event.target.value)}}
+        //             onKeyPress={event=>event.key === 'Enter' ? sendMessage(event) : null} 
+        //              /> */}
+        //              {/* <input type="file" 
+        //              onChange={(event)=>{console.log(event.target.files[0]);
+        //                 setFile(event.target.files[0].name);
+        //             }} 
                      
-                     onKeyPress ={event=>event.key === 'Enter' ? sendFile(event) : null}/>
+        //              onKeyPress ={event=>event.key === 'Enter' ? sendFile(event) : null}/> */}
 
-                </div>
+        //         </div>
 
+        //     </div>
+        // )
+
+        return (
+            <div className="outerContainer">
+              <div className="container">
+                  <InfoBar/>
+                  <Messages messages={messages} name={username} />
+                  <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
+              </div>
             </div>
-        )
+          );
 }
 
 export default Chat
