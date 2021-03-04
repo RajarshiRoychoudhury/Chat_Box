@@ -13,26 +13,54 @@ import ReactEmoji from 'react-emoji';
     isSentByCurrentUser = true;
   }
   console.log(isSentByCurrentUser);
-  return (
-    isSentByCurrentUser
-      ? (
-        <div className="messageContainer justifyEnd">
-          <p className="sentText pr-10">{trimmedName}</p>
-          <div className="messageBox backgroundBlue">
-            <p className="messageText colorWhite">{text}</p>S
-          </div>
-        </div>
-        )
-        : (
-          <div className="messageContainer justifyStart">
-            <div className="messageBox backgroundLight">
-              <p className="messageText colorDark">{text}</p>
+  //const img1 = "data:image/png;base64,"+image;
+  if(hasImage)
+  {
+    return (
+      isSentByCurrentUser
+        ? (
+          <div className="messageContainer justifyEnd">
+            <p className="sentText pr-10">{trimmedName}</p>
+            <div className="messageBox backgroundBlue">
+              <p className="messageText colorWhite">{text}</p>
+              <img src={image} alt="." width="200" height="200"></img>
             </div>
-            <p className="sentText pl-10 ">{user}</p>
-            <p className="messageText colorWhite"></p>
           </div>
-        )
-  );
-}
+          )
+          : (
+            <div className="messageContainer justifyStart">
+              <div className="messageBox backgroundLight">
+                <p className="messageText colorDark">{text}</p>
+                <img src={image} alt="."  width="200" height="200"></img>
+              </div>
+              <p className="sentText pl-10 ">{user}</p>
+              <p className="messageText colorWhite"></p>
+            </div>
+          )
+    );
+  }
+  else{
+    return (
+      isSentByCurrentUser
+        ? (
+          <div className="messageContainer justifyEnd">
+            <p className="sentText pr-10">{trimmedName}</p>
+            <div className="messageBox backgroundBlue">
+              <p className="messageText colorWhite">{text}</p>
+            </div>
+          </div>
+          )
+          : (
+            <div className="messageContainer justifyStart">
+              <div className="messageBox backgroundLight">
+                <p className="messageText colorDark">{text}</p>
+              </div>
+              <p className="sentText pl-10 ">{user}</p>
+              <p className="messageText colorWhite"></p>
+            </div>
+          )
+    );
+  }
 
+  }
 export default Message;

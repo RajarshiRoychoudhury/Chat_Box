@@ -77,6 +77,7 @@ const Chat = ({location}) => {
 
     const sendMessage = (event)=>{
         event.preventDefault();
+        //sendFile();
         //console.log(message);
         const toBeSent = {hasImage:hasImage,hasText:hasText,image:image,text:message,user:username};
         //console.log(message)
@@ -103,25 +104,30 @@ const Chat = ({location}) => {
     }
 
     const uploadFile = (file_whole) => {
-        console.log(file_whole);
-        convertToBase64(file_whole).then(base64 => {
+        convertToBase64(file_whole);
+    }
+        //console.log(file_whole);
+        //convertToBase64(file_whole).then(base64 => {
             //console.log(base64);
             //socket.emit("sendFile",{base64},()=>setFile(''));
-            setImage(base64);
-        });
-    };
+            //setImage(base64);
+            //console.log(image);
+
+   // })}
 
     const convertToBase64 = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
+        //return new Promise((resolve, reject) => {
+            var reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => {
-                resolve(reader.result);
+                //resolve(reader.result);
+                var base64 = reader.result;
+                setImage(base64);
             }
-            reader.onerror = (err) => {
-                reject(err);
-            }
-        });
+            // reader.onerror = (err) => {
+            //     reject(err);
+            // }
+        //});
     }
 
     const onChangeText = (event) =>{
@@ -131,8 +137,12 @@ const Chat = ({location}) => {
     }
 
     const onChangeImage = (event) =>{
+        event.preventDefault();
+        console.log(event.target.files);
         const image_name = event.target.files[0].name;
         setFile(image_name);
+        uploadFile(event.target.files[0]);
+        //setImage(event.target.files[0]);
         setImageStatus(true);
     }
 
