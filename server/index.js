@@ -4,7 +4,7 @@ const PORT = 5000||process.env.PORT
 const cors = require('cors')
 const fs = require('fs')
 const app = express()
-const { addUser, removeUser ,getUser } = require('./users');
+const { addUser, removeUser ,getUser , returnAllUsers ,addData} = require('./users');
 app.use(cors());
 const server = http.createServer(app)
 //const io = require('socket.io')(server)
@@ -20,8 +20,10 @@ io.on('connection',(socket)=>{
 
     const room = "chit-chat";
 
-    socket.on('disconnect',()=>{
-      console.log("User has left");
+    socket.on('disconnect',(message)=>{
+      const exit_message =  `${message.name} has left`;
+      message.text=exit_message;
+      socket.broadcast.emit("message",message);
       removeUser(socket);
     });
 
@@ -54,17 +56,16 @@ message structure:
       const welcome = [{hasImage:false, hasText:false, image:false,text:login_message,user:"admin"}];
       if(fs.existsSync("../data/"+filename))
       {
-          fs.readFile("../data/"+filename, function(err, data) { 
-        
-            // Check for errors 
-            if (err) throw err; 
+          let data = fs.readFileSync("../data/"+filename) ; 
+          console.log(data);
+            // Check for errors
             // Converting to JSON 
             const data_stored = JSON.parse(data); 
             console.log(data_stored);
             data_stored.forEach(item=>{
               //console.log(item);
               socket.emit("message",item);
-            });
+
         }); 
       }
       else{
@@ -92,24 +93,39 @@ message structure:
           while (m = rx.exec(s)) {
             res.push(m[1].substring(1).trim().toLowerCase());
           }
-          //console.log(res);
+          console.log(res);
           //const hawas = message;
           if(res.length>0)
           {
+            addData(user,message);
             socket.emit("message",message);
+            const all = returnAllUsers();
             res.forEach(username=>{
-              const to_be_sent = getUser(username)[1];
-              console.log(to_be_sent);
-            io.to(to_be_sent).emit("message",message);
+              if(all.indexOf(username)>-1){
+                const to_be_sent = getUser(username)[1];
+                console.log(username);
+                addData(username,message);
+                io.to(to_be_sent).emit("message",message);
+              }
             })
           }
           else{
             console.log("To be broadcasted");
+            const all = returnAllUsers();
+            //console.log(all);
+            all.forEach(name=>{
+              console.log(name);
+              addData(name,message);
+            })
             //socket.broadcast.emit("message", message);
             io.emit("message", message);
           }
       }
       else{
+        const all = returnAllUsers();
+        all.forEach(name=>{
+          addData(name,message);
+        })
         //socket.broadcast.emit("message", message);
         io.emit("message", message);
       }

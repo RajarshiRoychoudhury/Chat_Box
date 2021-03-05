@@ -23,7 +23,7 @@ import ReactEmoji from 'react-emoji';
             <p className="sentText pr-10">{trimmedName}</p>
             <div className="messageBox backgroundBlue">
               <p className="messageText colorWhite">{text}</p>
-              <img src={image} alt="." width="200" height="200"></img>
+              <img src={image} alt="." width="300" height="400"></img>
             </div>
           </div>
           )
@@ -31,7 +31,7 @@ import ReactEmoji from 'react-emoji';
             <div className="messageContainer justifyStart">
               <div className="messageBox backgroundLight">
                 <p className="messageText colorDark">{text}</p>
-                <img src={image} alt="."  width="200" height="200"></img>
+                <img src={image} alt="."  width="300" height="400"></img>
               </div>
               <p className="sentText pl-10 ">{user}</p>
               <p className="messageText colorWhite"></p>
